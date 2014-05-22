@@ -21,7 +21,7 @@ olcPidFile: <%= ::File.join(node['openldap']['run_dir']) %>
 replace: olcArgsFile
 olcArgsFile: <%= ::File.join(node['openldap']['run_dir']) %>
 
-<% unless node['platform'] == "centos" || node['platform'] == amazon -%>
+<% unless node['platform'] == "centos" || node['platform'] == "amazon" -%>
 dn: cn=module,cn=config
 changetype: add
 objectClass: olcModuleList
