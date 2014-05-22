@@ -80,6 +80,6 @@ end
 
 default['openldap']['size_limit'] = 500
 default['openldap']['readonly'] = false
-default['openldap']['repl_schemachecking'] = off
+default['openldap']['repl_schemachecking'] = "off"
 default['openldap']['repl_binddn'] = "cn=syncrole," + node['openldap']['basedn']
 default['openldap']['repl_retry'] = nil
