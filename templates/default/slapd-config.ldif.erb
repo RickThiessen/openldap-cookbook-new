@@ -1,0 +1,86 @@
+dn: cn=config
+changetype: modify
+
+# TLS configuration
+<% if node['openldap']['tls_enabled'] -%>
+replace: olcTLSCertificateFile
+olcTLSCertificateFile:     <%= node['openldap']['ssl_cert'] %>
+replace: TLSCertificateKeyFile
+TLSCertificateKeyFile:  <%= node['openldap']['ssl_key'] %>
+<% if node['openldap']['cafile'] -%>
+replace: olcTLSCACertificateFile
+olcTLSCACertificateFile:   <%= node['openldap']['cafile'] %>
+<% end -%>
+<% if node['openldap']['ssl_ciphers'] -%>
+add: olcTLSCipherSuite
+olcTLSCipherSuite: <%= node['openldap']['ssl_ciphers'] %>
+<% end -%>
+replace: olcPidFile
+olcPidFile: <%= ::File.join(node['openldap']['run_dir']) %>
+replace: olcArgsFile
+olcArgsFile: <%= ::File.join(node['openldap']['run_dir']) %>
+
+<% unless node['platform'] == "centos" || node['platform'] == amazon -%>
+dn: cn=module,cn=config
+changetype: add
+objectClass: olcModuleList
+olcModulePath	<%= node['openldap']['module_dir'] %>
+olcModuleLoad: back_hdb
+<% end %>
+<% if node['openldap']['slapd_type'] == "mirror" || node['openldap']['slapd_type'] == "mirror" -%>
+dn: cn=module,cn=config
+changetype: add
+objectClass: olcModuleList
+olcModuleLoad: syncprov.la
+<% end %>
+
+dn: olcDatabase={3}hdb,cn=config
+changetype: add
+objectClass: olcDatabaseConfig
+objectClass: olcHdbConfig
+olcDatabase: hdb
+olcSuffix: <%= node['openldap']['basedn'] %>
+olcRootDN: <%= node['openldap']['rootdn'] %>
+olcRootPW: <%= node['openldap']['rootpw'] %>
+olcDbDirectory: <%= node['openldap']['datadir'] %>
+olcReadOnly: <%= node['openldap']['readonly'] %>
+olcLastMod: TRUE
+olcDbConfig: set_cachesize 0 31457280 0
+olcDbConfig: set_lk_max_objects 1500
+olcDbConfig: set_lk_max_locks 1500
+olcDbConfig: set_lk_max_lockers 1500
+olcDbIndex: default pres,eq,approx,sub
+olcDbIndex: objectClass eq
+olcDbIndex: cn,ou,sn,uid,l,mail,gecos,memberUid,description
+olcDbIndex: loginShell,homeDirectory pres,eq,approx
+olcDbIndex: uidNumber,gidNumber pres,eq
+olcSizeLimit: <%= node['openldap']['size_limit'] %>
+<% if node['openldap']['slapd_type'] == "master" || node['openldap']['slapd_type'] == "mirror" -%>
+dn:olcOverlay=syncprov,olcDatabase={3}hdb,cn=config
+changetype: add
+objectClass: olcOverlayConfig
+objectClass: olcSyncProvConfig
+olcOverlay: syncprov
+olcSpCheckpoint: 100 10
+olcSpSessionlog: 100
+<% end %>
+<% if node['openldap']['slapd_type'] == "slave" || node['openldap']['slapd_type'] == "mirror" -%>
+olcSyncrepl: syncrepl rid=<%= node['openldap']['slapd_rid'] %>
+  provider=ldap://<%= node['openldap']['slapd_master'] %>:389
+  type=refreshAndPersist
+  searchbase="<%= node['openldap']['basedn'] %>"
+  filter="(objectClass=*)"
+  scope=sub
+  schemachecking=<%= node['openldap']['repl_schemachecking'] %>
+  bindmethod=simple
+  binddn="cn=syncrole,<%= node['openldap']['basedn'] %>"
+  <% if node['openldap']['tls_enabled'] -%>
+  starttls=yes
+  <% else -%>
+  starttls=no
+  <% end %>
+  credentials="<%= node['openldap']['slapd_replpw'] %>"
+  <% if node['openldap']['repl_retry'] -%>
+  retry="<%= node['openldap']['repl_retry'] %>"
+  <% end %>
+<% end -%>
