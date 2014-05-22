@@ -15,6 +15,7 @@ olcTLSCACertificateFile:   <%= node['openldap']['cafile'] %>
 add: olcTLSCipherSuite
 olcTLSCipherSuite: <%= node['openldap']['ssl_ciphers'] %>
 <% end -%>
+<% end %>
 replace: olcPidFile
 olcPidFile: <%= ::File.join(node['openldap']['run_dir']) %>
 replace: olcArgsFile
