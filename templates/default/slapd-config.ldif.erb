@@ -19,7 +19,7 @@ olcTLSCipherSuite: <%= node['openldap']['ssl_ciphers'] %>
 replace: olcPidFile
 olcPidFile: <%= ::File.join(node['openldap']['run_dir'],"slapd.pid") %>
 replace: olcArgsFile
-olcArgsFile: <%= ::File.join(node['openldap']['run_dir']),"slapd.args" %>
+olcArgsFile: <%= ::File.join(node['openldap']['run_dir'],"slapd.args") %>
 
 <% unless node['platform'] == "centos" || node['platform'] == "amazon" -%>
 dn: cn=module,cn=config
