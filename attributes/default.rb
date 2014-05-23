@@ -70,6 +70,8 @@ if node['openldap']['slapd_type'] == "slave" || node['openldap']['slapd_type'] =
   default['openldap']['slapd_rid']    = 102
 end
 
+Chef::Log.info("RID is #{node['openldap']['slapd_rid']}")
+
 # Auth settings for Apache
 if node['openldap']['basedn'] && node['openldap']['server']
   default['openldap']['auth_type']   = "openldap"
