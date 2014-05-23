@@ -44,7 +44,7 @@ olcSuffix: <%= node['openldap']['basedn'] %>
 olcRootDN: <%= node['openldap']['rootdn'] %>
 olcRootPW: <%= node['openldap']['rootpw'] %>
 olcDbDirectory: <%= node['openldap']['datadir'] %>
-olcReadOnly: <%= node['openldap']['readonly'] %>
+olcReadOnly: <%= node['openldap']['readonly'].to_s.upcase %>
 olcLastMod: TRUE
 olcDbConfig: set_cachesize 0 31457280 0
 olcDbConfig: set_lk_max_objects 1500
