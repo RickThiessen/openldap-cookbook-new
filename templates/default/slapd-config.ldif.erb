@@ -74,7 +74,7 @@ olcSyncrepl: syncrepl rid=<%= node['openldap']['slapd_rid'] %>
   scope=sub
   schemachecking=<%= node['openldap']['repl_schemachecking'] %>
   bindmethod=simple
-  binddn="cn=syncrole,<%= node['openldap']['basedn'] %>"
+  binddn="<%= node['openldap']['repl_binddn'] %>"
   <% if node['openldap']['tls_enabled'] -%>
   starttls=yes
   <% else -%>
@@ -85,3 +85,6 @@ olcSyncrepl: syncrepl rid=<%= node['openldap']['slapd_rid'] %>
   retry="<%= node['openldap']['repl_retry'] %>"
   <% end %>
 <% end -%>
+<% if node['openldap']['slapd_type'] == "mirror" %>
+olcMirrorMode: TRUE
+<% end %>
