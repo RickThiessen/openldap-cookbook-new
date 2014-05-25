@@ -22,6 +22,6 @@ end
 
 
 execute "configure ldap" do 
-	command "sleep 5;ldapmodify -Y EXTERNAL -H ldapi:/// </tmp/configmaindb.ldif"
+	command "sleep 5;ldapmodify -Y EXTERNAL -H ldapi:/// </tmp/ldapconfig.ldif"
 end
 
