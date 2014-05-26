@@ -26,6 +26,9 @@ default['openldap']['shadow_ou'] = 'people'
 default['openldap']['group_ou'] = 'groups'
 default['openldap']['automount_ou'] = 'automount'
 
+default['openldap']['auth_basedn'] = node['openldap']['basedn']
+default['openldap']['auth_host'] = node['openldap']['server']
+
 unless node['domain'].nil? || node['domain'].split('.').count < 2
   default['openldap']['basedn'] = "dc=#{node['domain'].split('.').join(",dc=")}"
   default['openldap']['server'] = "ldap.#{node['domain']}"
