@@ -57,15 +57,6 @@ olcDbIndex: loginShell,homeDirectory pres,eq,approx
 olcDbIndex: uidNumber,gidNumber pres,eq
 olcSizeLimit: <%= node['openldap']['size_limit'] %>
 
-<% if node['openldap']['slapd_type'] == "master" || node['openldap']['slapd_type'] == "mirror" -%>
-dn:olcOverlay=syncprov,olcDatabase={3}hdb,cn=config
-changetype: add
-objectClass: olcOverlayConfig
-objectClass: olcSyncProvConfig
-olcOverlay: syncprov
-olcSpCheckpoint: 100 10
-olcSpSessionlog: 100
-<% end %>
 <% if node['openldap']['slapd_type'] == "slave" || node['openldap']['slapd_type'] == "mirror" -%>
 olcSyncrepl: rid=<%= node['openldap']['slapd_rid'] %>
   provider=ldap://<%= node['openldap']['slapd_master'] %>:389
@@ -88,4 +79,14 @@ olcSyncrepl: rid=<%= node['openldap']['slapd_rid'] %>
 <% end -%>
 <% if node['openldap']['slapd_type'] == "mirror" %>
 olcMirrorMode: TRUE
+<% end %>
+
+<% if node['openldap']['slapd_type'] == "master" || node['openldap']['slapd_type'] == "mirror" -%>
+dn:olcOverlay=syncprov,olcDatabase={3}hdb,cn=config
+changetype: add
+objectClass: olcOverlayConfig
+objectClass: olcSyncProvConfig
+olcOverlay: syncprov
+olcSpCheckpoint: 100 10
+olcSpSessionlog: 100
 <% end %>
